@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 const socialFormats = {
   "Instagram Square (1:1)": { width: 1080, height: 1080, aspectRatio: "1:1" },
@@ -49,6 +51,13 @@ export default function SocialShare() {
     } catch (error) {
       console.log(error);
       alert("Failed to upload image");
+      // <Alert>
+      //   <Terminal className="h-4 w-4" />
+      //   <AlertTitle>Error!</AlertTitle>
+      //   <AlertDescription>
+      //     Failed to upload image!
+      //   </AlertDescription>
+      // </Alert>;
     } finally {
       setIsUploading(false);
     }

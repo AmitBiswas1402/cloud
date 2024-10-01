@@ -3,10 +3,10 @@ import { v2 as cloudinary } from 'cloudinary';
 import { auth } from '@clerk/nextjs/server';
 
 // Configuration
-cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View API Keys' above to copy your API secret
+cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View Credentials' below to copy your API secret
 });
 
 interface CloudinaryUploadResult {
@@ -14,25 +14,25 @@ interface CloudinaryUploadResult {
     [key: string]: any
 }
 
-export async function POST (request: NextRequest) {
+export async function POST(request: NextRequest) {
     const {userId} = auth()
 
-    if (userId) {
+    if (!userId) {
         return NextResponse.json({error: "Unauthorized"}, {status: 401})
     }
 
     try {
-        const formData = await request.formData()
-        const file = formData.get("file") as File | null
+        const formData = await request.formData();
+        const file = formData.get("file") as File | null;
 
-        if (!file) {
+        if(!file){
             return NextResponse.json({error: "File not found"}, {status: 400})
         }
 
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
 
-        const result = await new Promise <CloudinaryUploadResult>(
+        const result = await new Promise<CloudinaryUploadResult>(
             (resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
                     {folder: "next-cloudinary-uploads"},
@@ -47,14 +47,15 @@ export async function POST (request: NextRequest) {
         return NextResponse.json(
             {
                 publicId: result.public_id
-            }, 
+            },
             {
                 status: 200
             }
         )
 
     } catch (error) {
-        console.log("Upload image failed", error);
+        console.log("UPload image failed", error)
         return NextResponse.json({error: "Upload image failed"}, {status: 500})
     }
+
 }
